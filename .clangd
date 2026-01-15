@@ -1,0 +1,8 @@
+InlayHints:
+  Enabled: No
+
+CompileFlags:
+  Add:
+    - "-Wall"
+    - "-Wextra"
+    - "-std=c++20"
