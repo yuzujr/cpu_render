@@ -3,6 +3,4 @@ InlayHints:
 
 CompileFlags:
   Add:
-    - "-Wall"
-    - "-Wextra"
     - "-std=c++20"
