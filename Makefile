@@ -2,8 +2,8 @@ CXX      := g++
 CXXFLAGS := -std=c++20 -O3 -march=native -Wall -Wextra -Wpedantic
 LDFLAGS  :=
 TARGET   := main
-SRC      := main.cpp
-DEPS     := math.hpp shaders.hpp
+SRC      := src/main.cpp
+DEPS     := src/shaders.hpp src/vec.hpp
 
 .PHONY: all run clean open rebuild
 
