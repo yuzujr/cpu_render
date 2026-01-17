@@ -2,26 +2,60 @@
 #define VEC_HPP
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstddef>
 
+// -------------------- vec storage --------------------
+template <std::size_t N>
+struct vec_storage;
+
+template <>
+struct vec_storage<2> {
+    float x{}, y{};
+};
+
+template <>
+struct vec_storage<3> {
+    float x{}, y{}, z{};
+};
+
+template <>
+struct vec_storage<4> {
+    float x{}, y{}, z{}, w{};
+};
+
 // -------------------- vec<N> --------------------
 template <std::size_t N>
-struct vec {
+struct vec : vec_storage<N> {
     static_assert(N >= 2 && N <= 4);
 
-    float x{}, y{}, z{}, w{};
+    // constructors
+    constexpr vec() = default;
+
+    constexpr vec(float x, float y)
+        requires(N == 2)
+        : vec_storage<N>{x, y} {}
+
+    constexpr vec(float x, float y, float z)
+        requires(N == 3)
+        : vec_storage<N>{x, y, z} {}
+
+    constexpr vec(float x, float y, float z, float w)
+        requires(N == 4)
+        : vec_storage<N>{x, y, z, w} {}
 
     // index access (only [0..N-1] is valid)
     constexpr float& operator[](std::size_t i) {
-        if (i == 0)
-            return x;
-        else if (i == 1)
-            return y;
-        else if (i == 2)
-            return z;
-        else
-            return w;
+        assert(i < N && "vec index out of bounds");
+        if constexpr (N == 2) {
+            return i == 0 ? this->x : this->y;
+        } else if constexpr (N == 3) {
+            return i == 0 ? this->x : (i == 1 ? this->y : this->z);
+        } else {
+            return i == 0 ? this->x
+                          : (i == 1 ? this->y : (i == 2 ? this->z : this->w));
+        }
     }
     constexpr float operator[](std::size_t i) const {
         return const_cast<vec&>(*this)[i];
@@ -112,47 +146,48 @@ struct vec {
         v /= s;
         return v;
     }
+
+    // ---- swizzle functions ----
+    constexpr vec<2> xy() const
+        requires(N >= 2)
+    {
+        return vec<2>{this->x, this->y};
+    }
+
+    constexpr vec<2> yx() const
+        requires(N >= 2)
+    {
+        return vec<2>{this->y, this->x};
+    }
+
+    constexpr vec<3> xyy() const
+        requires(N >= 2)
+    {
+        return vec<3>{this->x, this->y, this->y};
+    }
+
+    constexpr vec<3> zxy() const
+        requires(N >= 3)
+    {
+        return vec<3>{this->z, this->x, this->y};
+    }
+
+    constexpr vec<3> xyx() const
+        requires(N >= 2)
+    {
+        return vec<3>{this->x, this->y, this->x};
+    }
+
+    constexpr vec<3> yzx() const
+        requires(N >= 3)
+    {
+        return vec<3>{this->y, this->z, this->x};
+    }
 };
 
 using vec2 = vec<2>;
 using vec3 = vec<3>;
 using vec4 = vec<4>;
-
-template <std::size_t N>
-    requires(N >= 2)
-constexpr vec2 xy(const vec<N>& t) {
-    return vec2{t.x, t.y};
-}
-
-template <std::size_t N>
-    requires(N >= 2)
-constexpr vec2 yx(const vec<N>& t) {
-    return vec2{t.y, t.x};
-}
-
-template <std::size_t N>
-    requires(N >= 2)
-constexpr vec3 xyy(const vec<N>& t) {
-    return vec3{t.x, t.y, t.y};
-}
-
-template <std::size_t N>
-    requires(N >= 3)
-constexpr vec3 zxy(const vec<N>& t) {
-    return vec3{t.z, t.x, t.y};
-}
-
-template <std::size_t N>
-    requires(N >= 2)
-constexpr vec3 xyx(const vec<N>& t) {
-    return vec3{t.x, t.y, t.x};
-}
-
-template <std::size_t N>
-    requires(N >= 3)
-constexpr vec3 yzx(const vec<N>& t) {
-    return vec3{t.y, t.z, t.x};
-}
 
 // -------------------- basic math --------------------
 template <std::size_t N>

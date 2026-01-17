@@ -30,7 +30,7 @@ inline void shader1(const RenderCtx& ctx, int frame,
             vec2 I = {(float)x, (float)y};
             vec2 Res = {(float)ctx.w, (float)ctx.h};
             vec2 I2 = I + I;
-            vec3 baseDir = normalize(vec3(I2.x, I2.y, 0) - xyy(Res));
+            vec3 baseDir = normalize(vec3(I2.x, I2.y, 0) - Res.xyy());
             float iTime = (float)frame / ctx.frames;
 
             // Clear fragColor and raymarch 77 steps
@@ -48,7 +48,7 @@ inline void shader1(const RenderCtx& ctx, int frame,
                 // Use blocky "turbulence" for the distortion
                 // https://mini.gmshaders.com/p/turbulence
                 for (d = 0; d++ < 9;) {
-                    p += zxy(sin(round(p) + d * 3.));
+                    p += sin(round(p) + d * 3.).zxy();
                 }
             }
 
@@ -70,9 +70,9 @@ inline void shader2(const RenderCtx& ctx, int frame,
             vec2 Res = {(float)ctx.w, (float)ctx.h};
             float t = (float)frame / ctx.frames;
             vec4 O;
-            vec2 p = (xy(FC) * 2.f - Res) / Res.y * 2e1f;
+            vec2 p = (FC.xy() * 2.f - Res) / Res.y * 2e1f;
             O = tanh(vec4(1, 1, 2, 1) /
-                     length(p * .2f + tan(yx(sin(p += t * 10.0)) + p)));
+                     length(p * .2f + tan(sin(p += t * 10.0).yx() + p)));
             buf.push_back(nearbyintf(O.x * 255));
             buf.push_back(nearbyintf(O.y * 255));
             buf.push_back(nearbyintf(O.z * 255));
@@ -100,15 +100,16 @@ inline void shader3(const RenderCtx& ctx, int frame,
             for (O *= i; i++ < 2e1;) {
                 // Sample point (from ray direction)
                 vec3 p =
-                    z * normalize(vec3(I2.x, I2.y, 0) - xyx(iResolution)) + .1f;
+                    z * normalize(vec3(I2.x, I2.y, 0) - iResolution.xyx()) +
+                    .1f;
 
                 // Polar coordinates and additional transformations
                 p = vec3(std::atan2(p.y / .2, p.x) * 2., p.z / 3.,
-                         length(xy(p)) - 5. - z * .2);
+                         length(p.xy()) - 5. - z * .2);
 
                 // Apply turbulence and refraction effect
                 for (d = 0.; d++ < 7.;)
-                    p += sin(yzx(p) * d + iTime + .3 * i) / d;
+                    p += sin(p.yzx() * d + iTime + .3 * i) / d;
 
                 // Distance to cylinder and waves with refraction
                 vec3 tmp = .4f * cos(p) - .4f;
@@ -121,7 +122,7 @@ inline void shader3(const RenderCtx& ctx, int frame,
             O = tanh(O * O / 4e2);
             buf.push_back(nearbyintf(O.x * 255));
             buf.push_back(nearbyintf(O.y * 255));
-            buf.push_back(nearbyintf(O.z * 255));            
+            buf.push_back(nearbyintf(O.z * 255));
         }
     }
 }
