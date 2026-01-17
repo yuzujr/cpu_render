@@ -69,15 +69,19 @@ This will:
 - Automatically open the video with `mpv`
 
 **Note:** Requires `ffmpeg` and `mpv` to be installed on your system.
+
 Windows users can manually use `ffmpeg` to create the video from the frames.
 
 ## Screenshots
 
 ### Shader 1
+<img width="1920" height="1080" alt="2026-01-17 17-35-47" src="https://github.com/user-attachments/assets/f584faff-961e-425b-a55b-ba8081267ad2" />
 
 ### Shader 2
+<img width="1920" height="1080" alt="2026-01-17 17-35-58" src="https://github.com/user-attachments/assets/99e14302-609f-4a31-8005-7108eeba43fa" />
 
 ### Shader 3
+<img width="1920" height="1080" alt="2026-01-17 17-34-51" src="https://github.com/user-attachments/assets/b4c4a4d2-a90b-4ea8-80b6-a85a8c1804a6" />
 
 ## Dependencies
 
