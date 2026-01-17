@@ -45,11 +45,20 @@ struct vec {
     friend constexpr vec operator-(vec lhs, const vec& rhs) {
         lhs -= rhs;
         return lhs;
-        return lhs;
     }
     friend constexpr vec operator-(vec v) {
         for (std::size_t i = 0; i < N; ++i) v[i] = -v[i];
         return v;
+    }
+
+    // ---- vector * vector ----
+    constexpr vec& operator*=(const vec& rhs) {
+        for (std::size_t i = 0; i < N; ++i) (*this)[i] *= rhs[i];
+        return *this;
+    }
+    friend constexpr vec operator*(vec lhs, const vec& rhs) {
+        lhs *= rhs;
+        return lhs;
     }
 
     // ---- vector + scalar ----
@@ -131,6 +140,18 @@ template <std::size_t N>
     requires(N >= 3)
 constexpr vec3 zxy(const vec<N>& t) {
     return vec3{t.z, t.x, t.y};
+}
+
+template <std::size_t N>
+    requires(N >= 2)
+constexpr vec3 xyx(const vec<N>& t) {
+    return vec3{t.x, t.y, t.x};
+}
+
+template <std::size_t N>
+    requires(N >= 3)
+constexpr vec3 yzx(const vec<N>& t) {
+    return vec3{t.y, t.z, t.x};
 }
 
 // -------------------- basic math --------------------

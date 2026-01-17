@@ -80,4 +80,50 @@ inline void shader2(const RenderCtx& ctx, int frame,
     }
 }
 
+inline void shader3(const RenderCtx& ctx, int frame,
+                    std::vector<unsigned char>& buf) {
+    for (int y = 0; y < ctx.h; ++y) {
+        for (int x = 0; x < ctx.w; ++x) {
+            // Raymarch depth
+            float z{};
+            // Step distance
+            float d{};
+            // Raymarch iterator
+            float i{};
+            // output
+            vec4 O;
+            vec2 iResolution{(float)ctx.w, (float)ctx.h};
+            vec2 I{(float)x, (float)y};
+            vec2 I2 = I + I;
+            float iTime = (float)frame / ctx.frames;
+            // Clear fragColor and raymarch 20 steps
+            for (O *= i; i++ < 2e1;) {
+                // Sample point (from ray direction)
+                vec3 p =
+                    z * normalize(vec3(I2.x, I2.y, 0) - xyx(iResolution)) + .1f;
+
+                // Polar coordinates and additional transformations
+                p = vec3(std::atan2(p.y / .2, p.x) * 2., p.z / 3.,
+                         length(xy(p)) - 5. - z * .2);
+
+                // Apply turbulence and refraction effect
+                for (d = 0.; d++ < 7.;)
+                    p += sin(yzx(p) * d + iTime + .3 * i) / d;
+
+                // Distance to cylinder and waves with refraction
+                vec3 tmp = .4f * cos(p) - .4f;
+                z += d = length(vec4(tmp.x, tmp.y, tmp.z, p.z));
+
+                // Coloring and brightness
+                O += (1. + cos(p.x + i * .4 + z + vec4(6, 1, 2, 0))) / d;
+            }
+            // Tanh tonemap
+            O = tanh(O * O / 4e2);
+            buf.push_back(nearbyintf(O.x * 255));
+            buf.push_back(nearbyintf(O.y * 255));
+            buf.push_back(nearbyintf(O.z * 255));            
+        }
+    }
+}
+
 #endif
