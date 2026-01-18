@@ -95,6 +95,16 @@ struct vec : vec_storage<N> {
         return lhs;
     }
 
+    // ---- vector / vector ----
+    constexpr vec& operator/=(const vec& rhs) {
+        for (std::size_t i = 0; i < N; ++i) (*this)[i] /= rhs[i];
+        return *this;
+    }
+    friend constexpr vec operator/(vec lhs, const vec& rhs) {
+        lhs /= rhs;
+        return lhs;
+    }
+
     // ---- vector + scalar ----
     constexpr vec& operator+=(float s) {
         for (std::size_t i = 0; i < N; ++i) (*this)[i] += s;
@@ -182,6 +192,12 @@ struct vec : vec_storage<N> {
         requires(N >= 3)
     {
         return vec<3>{this->y, this->z, this->x};
+    }
+
+    constexpr vec<3> xyz() const
+        requires(N >= 3)
+    {
+        return vec<3>{this->x, this->y, this->z};
     }
 };
 
@@ -284,7 +300,12 @@ inline vec<N> round(vec<N> v) {
         return nearbyintf(a);
     });
 }
-
+template <std::size_t N>
+inline vec<N> ceil(vec<N> v) {
+    return map(v, [](float a) {
+        return ceil(a);
+    });
+}
 template <std::size_t N>
 inline vec<N> clamp(vec<N> v, float lo, float hi) {
     return map(v, [=](float a) {

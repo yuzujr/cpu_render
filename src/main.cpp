@@ -9,7 +9,7 @@
 
 const int w = 1920;
 const int h = 1080;
-const int frames = 180;
+const int frames = 120;
 const RenderCtx g_ctx{.w = w, .h = h, .frames = frames};
 
 int main() {
@@ -28,7 +28,7 @@ int main() {
             f << std::format("{} {}\n", w, h);
             f << "255\n";
             buf.clear();
-            shader3(g_ctx, frame, buf);
+            shader4(g_ctx, frame, buf);
             f.write(reinterpret_cast<const char*>(buf.data()), buf.size());
             f.close();
             std::cout << "Generated " << output_path << '\n';

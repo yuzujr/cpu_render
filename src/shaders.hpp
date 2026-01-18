@@ -127,4 +127,33 @@ inline void shader3(const RenderCtx& ctx, int frame,
     }
 }
 
+inline void shader4(const RenderCtx& ctx, int frame,
+                    std::vector<unsigned char>& buf) {
+    for (int y = 0; y < ctx.h; ++y) {
+        for (int x = 0; x < ctx.w; ++x) {
+            float z{}, d{}, i{};
+            vec3 FC{(float)x, (float)y, 0};
+            vec2 r{(float)ctx.w, (float)ctx.h};
+            float t = (float)frame / ctx.frames;
+            vec4 o;
+
+            for (; i++ < 90.f;) {
+                vec3 p = z * normalize(FC * 2.f - r.xyx());
+                p = vec3(std::atan2(p.y, p.x), p.z / 3. - t,
+                         length(p.xy()) - 9.);
+                for (d = 0.; d++ < 5.;)
+                    p += sin(ceil(p.yzx() * d - i * vec3(.2f, 0, 0))) / d;
+                vec3 tmp = .2f * cos(6.f * p) - .2f;
+                z += d = .2 * length(vec4(tmp.x, tmp.y, tmp.z, p.z));
+                o += (cos(p.x + vec4(0, .5f, 1, 0)) + 1.) / d / z;
+            }
+	    o=tanh(o*o/8e2);
+
+            buf.push_back(nearbyintf(o.x * 255));
+            buf.push_back(nearbyintf(o.y * 255));
+            buf.push_back(nearbyintf(o.z * 255));
+        }
+    }
+}
+
 #endif
