@@ -83,6 +83,9 @@ Windows users can manually use `ffmpeg` to create the video from the frames.
 ### Shader 3
 <img width="1920" height="1080" alt="2026-01-17 17-34-51" src="https://github.com/user-attachments/assets/b4c4a4d2-a90b-4ea8-80b6-a85a8c1804a6" />
 
+### Shader 4
+<img width="1920" height="1080" alt="图片" src="https://github.com/user-attachments/assets/0421b82e-f9ff-4e98-9eaa-2edbbffc1ee6" />
+
 ## Dependencies
 
 - C++20 compatible compiler (g++)
